@@ -1,5 +1,6 @@
 package com.example.fragments
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.ListView
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 
 class HotelListFragment : ListFragment(),
     HotelListView,
@@ -21,7 +23,8 @@ class HotelListFragment : ListFragment(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        presenter.searchHotels("")
+        retainInstance = true
+        presenter.init()
         listView.onItemLongClickListener = this
     }
 
@@ -110,6 +113,13 @@ class HotelListFragment : ListFragment(),
     override fun onDestroyActionMode(mode: ActionMode?) {
         actionMode = null
         presenter.hideDeleteMode()
+    }
+
+    override fun showMessageHotelsDeleted(count: Int) {
+        Snackbar.make(listView, getString(R.string.message_hotels_deleted, count), Snackbar.LENGTH_LONG).setAction(R.string.undo) {
+            presenter.undoDelete()
+        }
+            .show()
     }
 
     interface OnHotelDeletedListener {
